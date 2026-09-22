@@ -8,51 +8,52 @@
     "scheme": "qrattendance",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+
     "ios": {
       "supportsTablet": true
     },
+
     "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
-      },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.atillo.qrattendance"
     },
+
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/icon.png"
     },
+
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#F7F6F2",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#F7F6F2"
           }
         }
       ],
       "@react-native-community/datetimepicker",
       "expo-secure-store"
     ],
+
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
     },
+
     "extra": {
       "router": {},
       "eas": {
         "projectId": "a4cc8a32-215c-4fd1-b86d-4f1a0cd0d6c7"
       }
     },
+
     "owner": "johnmico123"
   }
 }

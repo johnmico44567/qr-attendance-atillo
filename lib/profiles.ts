@@ -27,7 +27,10 @@ export async function getProfile(
 
 export async function updateProfile(
   userId: string,
-  updates: { full_name?: string; role?: Role }
+  updates: {
+    full_name?: string;
+    role?: Role;
+  }
 ): Promise<{ error: string | null }> {
   const { error } = await supabase
     .from('profiles')

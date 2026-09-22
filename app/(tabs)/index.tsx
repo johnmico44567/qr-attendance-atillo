@@ -1,8 +1,15 @@
 import { router } from 'expo-router';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 import AppButton from '@/components/AppButton';
 import Header from '@/components/Header';
+
 import { COLORS } from '@/constants/colors';
 
 export default function Index() {
@@ -13,39 +20,91 @@ export default function Index() {
       </View>
 
       <View style={styles.bodyContainer}>
-        <Text style={styles.mainTitle}>School Event Attendance</Text>
+        <Text style={styles.mainTitle}>
+          School Event Attendance
+        </Text>
+
         <Text style={styles.subtitle}>
-          Scan QR Codes to record attendance during school activities.
+          Scan QR Codes to record attendance during
+          school activities.
         </Text>
       </View>
 
       <View style={styles.footerContainer}>
-        <AppButton
-          theme="primary"
-          title="Scan QR Code"
-          icon="qr-code-outline"
-          onPress={() => router.push('/scan')}
-        />
-        <AppButton
-          title="Attendance History"
-          icon="time-outline"
-          onPress={() => router.push('/history')}
-        />
-        <AppButton
-          title="Profile"
-          icon="person-outline"
-          onPress={() => router.push('/profile')}
-        />
+        <View style={styles.buttonWrapper}>
+          <AppButton
+            theme="primary"
+            title="Scan QR Code"
+            icon="qr-code-outline"
+            onPress={() => router.push('/scan')}
+          />
+        </View>
+
+        <View style={styles.buttonWrapper}>
+          <AppButton
+            title="Attendance History"
+            icon="time-outline"
+            onPress={() => router.push('/history')}
+          />
+        </View>
+
+        <View style={styles.buttonWrapper}>
+          <AppButton
+            title="Profile"
+            icon="person-outline"
+            onPress={() => router.push('/profile')}
+          />
+        </View>
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.background, alignItems: 'center' },
-  headerContainer: { flex: 1, justifyContent: 'center' },
-  bodyContainer: { alignItems: 'center', paddingHorizontal: 32, marginBottom: 16 },
-  mainTitle: { fontSize: 18, fontWeight: '600', color: COLORS.primary, marginBottom: 6, textAlign: 'center' },
-  subtitle: { fontSize: 14, color: COLORS.textSecondary, textAlign: 'center' },
-  footerContainer: { flex: 1 / 3, alignItems: 'center', paddingHorizontal: 24, width: '100%' },
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
+
+  headerContainer: {
+    width: '100%',
+    paddingHorizontal: 24,
+    paddingTop: 12,
+    paddingBottom: 24,
+    alignItems: 'flex-start',
+  },
+
+  bodyContainer: {
+    width: '100%',
+    paddingHorizontal: 24,
+    marginBottom: 32,
+    alignItems: 'flex-start',
+  },
+
+  mainTitle: {
+    fontSize: 28,
+    lineHeight: 34,
+    fontWeight: '700',
+    color: COLORS.textPrimary,
+    marginBottom: 8,
+    textAlign: 'left',
+  },
+
+  subtitle: {
+    fontSize: 15,
+    lineHeight: 21,
+    color: COLORS.textSecondary,
+    textAlign: 'left',
+    maxWidth: 360,
+  },
+
+  footerContainer: {
+    width: '100%',
+    paddingHorizontal: 24,
+    gap: 12,
+  },
+
+  buttonWrapper: {
+    width: '100%',
+  },
 });

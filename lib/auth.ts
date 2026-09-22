@@ -1,57 +1,107 @@
+import { useState, useEffect } from 'react';
+
+import { supabase } from './supabase';
+
 import type { Session, User } from '@supabase/supabase-js';
 
-import { supabase } from '@/lib/supabase';
-
-export type RegistrationDetails = {
-  email: string;
-  password: string;
-  fullName: string;
-  studentId: string;
-  course?: string;
-  yearLevel?: string;
+type AuthState = {
+  session: Session | null;
+  user: User | null;
+  loading: boolean;
 };
 
-export async function signIn(email: string, password: string) {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: email.trim(),
+let globalSession: Session | null = null;
+
+let globalUser: User | null = null;
+
+let globalLoading = false;
+
+let listeners: Set<() => void> = new Set();
+
+function notify() {
+  listeners.forEach((l) => l());
+}
+
+export function setAuth(session: Session | null) {
+  globalSession = session;
+  globalUser = session?.user ?? null;
+  globalLoading = false;
+  notify();
+}
+
+export function useAuth(): AuthState {
+  const [, forceRender] = useState(0);
+
+  useEffect(() => {
+    const listener = () => forceRender((n) => n + 1);
+
+    listeners.add(listener);
+
+    return () => {
+      listeners.delete(listener);
+    };
+  }, []);
+
+  return {
+    session: globalSession,
+    user: globalUser,
+    loading: globalLoading,
+  };
+}
+
+export type SignUpProfile = {
+  full_name: string;
+  role: 'student' | 'teacher';
+};
+
+export async function signUp(
+  email: string,
+  password: string,
+  profile?: SignUpProfile
+) {
+  const { data, error } = await supabase.auth.signUp({
+    email,
     password,
   });
 
-  if (error) throw error;
-  return data;
+  if (!error && data.session && profile) {
+    await supabase
+      .from('profiles')
+      .update({
+        full_name: profile.full_name,
+        role: profile.role,
+      })
+      .eq('id', data.session.user.id);
+  }
+
+  if (!error && data.session) {
+    setAuth(data.session);
+  }
+
+  return { data, error };
 }
 
-export async function signUp(details: RegistrationDetails) {
-  const { data, error } = await supabase.auth.signUp({
-    email: details.email.trim(),
-    password: details.password,
-    options: {
-      data: {
-        full_name: details.fullName.trim(),
-        student_id: details.studentId.trim(),
-        course: details.course?.trim() || null,
-        year_level: details.yearLevel?.trim() || null,
-      },
-    },
-  });
+export async function signIn(
+  email: string,
+  password: string
+) {
+  const { data, error } =
+    await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  if (error) throw error;
-  return data;
+  if (!error && data.session) {
+    setAuth(data.session);
+  }
+
+  return { data, error };
 }
 
 export async function signOut() {
-  const { error } = await supabase.auth.signOut();
-  if (error) throw error;
-}
+  setAuth(null);
 
-export async function getSession(): Promise<Session | null> {
-  const { data, error } = await supabase.auth.getSession();
-  if (error) throw error;
-  return data.session;
-}
+  supabase.auth.signOut().catch(() => {});
 
-export function onAuthStateChange(callback: (session: Session | null) => void) {
-  return supabase.auth.onAuthStateChange((_event, session) => callback(session));
+  return { error: null };
 }
-
-export type AuthUser = User;

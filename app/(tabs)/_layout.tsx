@@ -1,20 +1,36 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
+
 import { Tabs } from 'expo-router';
 
-import { useAuth } from '@/lib/auth-context';
+import { COLORS } from '@/constants/colors';
 
 export default function TabLayout() {
-  const { profile } = useAuth();
-  const canTeach = profile?.role === 'teacher';
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#ffd33d',
-        headerStyle: { backgroundColor: '#25292e' },
+        tabBarActiveTintColor: COLORS.primary,
+        tabBarInactiveTintColor: COLORS.textSecondary,
+
+        headerStyle: {
+          backgroundColor: COLORS.card,
+        },
+
         headerShadowVisible: false,
-        headerTintColor: '#fff',
-        tabBarStyle: { backgroundColor: '#25292e' },
+
+        headerTintColor: COLORS.textPrimary,
+
+        tabBarStyle: {
+          backgroundColor: COLORS.card,
+          borderTopWidth: 1,
+          borderTopColor: COLORS.border,
+          elevation: 0,
+          shadowOpacity: 0,
+        },
+
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
+        },
       }}
     >
       <Tabs.Screen
@@ -23,60 +39,85 @@ export default function TabLayout() {
           title: 'Home',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={focused ? 'home-sharp' : 'home-outline'}
+              name={
+                focused
+                  ? 'home-sharp'
+                  : 'home-outline'
+              }
               color={color}
               size={24}
             />
           ),
         }}
       />
+
       <Tabs.Screen
         name="scan"
         options={{
           title: 'Scan',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={focused ? 'qr-code' : 'qr-code-outline'}
+              name={
+                focused
+                  ? 'qr-code'
+                  : 'qr-code-outline'
+              }
               color={color}
               size={24}
             />
           ),
         }}
       />
+
       <Tabs.Screen
         name="history"
         options={{
           title: 'History',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={focused ? 'time' : 'time-outline'}
+              name={
+                focused
+                  ? 'time'
+                  : 'time-outline'
+              }
               color={color}
               size={24}
             />
           ),
         }}
       />
-      <Tabs.Screen
-        name="teacher"
-        options={{
-          href: canTeach ? undefined : null,
-          title: 'Teacher',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? 'clipboard' : 'clipboard-outline'}
-              color={color}
-              size={24}
-            />
-          ),
-        }}
-      />
+
+      {/* Profile comes BEFORE Teacher */}
       <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={focused ? 'person' : 'person-outline'}
+              name={
+                focused
+                  ? 'person'
+                  : 'person-outline'
+              }
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
+
+      {/* Teacher is now the LAST tab */}
+      <Tabs.Screen
+        name="teacher"
+        options={{
+          title: 'Teacher',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={
+                focused
+                  ? 'clipboard'
+                  : 'clipboard-outline'
+              }
               color={color}
               size={24}
             />

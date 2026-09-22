@@ -1,55 +1,58 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { router, Stack, useSegments } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { Redirect, Stack, useSegments } from 'expo-router';
+
 import { ActivityIndicator, View } from 'react-native';
-import 'react-native-reanimated';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { AuthProvider, useAuth } from '@/lib/auth-context';
+import { COLORS } from '@/constants/colors';
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import { useAuth } from '@/lib/auth';
 
 export default function RootLayout() {
-  return (
-    <AuthProvider>
-      <RootNavigator />
-    </AuthProvider>
-  );
-}
-
-function RootNavigator() {
-  const colorScheme = useColorScheme();
+  const { user, loading } = useAuth();
   const segments = useSegments();
-  const { session, loading } = useAuth();
-
-  useEffect(() => {
-    if (loading) return;
-    const firstSegment = segments[0];
-    const inAuthFlow = firstSegment === 'login' || firstSegment === 'register';
-    if (!session && !inAuthFlow) router.replace('/login');
-    if (session && inAuthFlow) router.replace('/(tabs)');
-  }, [loading, segments, session]);
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator />
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator
+          size="large"
+          color={COLORS.primary}
+        />
       </View>
     );
   }
 
+  const inAuthGroup =
+    segments[0] === 'login' ||
+    segments[0] === 'register';
+
+  const inTabsGroup = segments[0] === '(tabs)';
+
+  if (!user && inTabsGroup) {
+    return <Redirect href="/login" />;
+  }
+
+  if (user && inAuthGroup) {
+    return <Redirect href="/(tabs)" />;
+  }
+
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="login" options={{ headerShown: false }} />
-        <Stack.Screen name="register" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <Stack
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="login" />
+      <Stack.Screen name="register" />
+      <Stack.Screen name="(tabs)" />
+    </Stack>
   );
 }
+
+const styles = {
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+  },
+};
